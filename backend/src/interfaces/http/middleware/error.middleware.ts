@@ -1,7 +1,6 @@
 import { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import { AppError } from '../../../application/errors/AppError.js';
 import { ZodError } from 'zod';
-import { logger } from '../../../shared/logger.js';
 import { HTTP_STATUS } from '../../../shared/constants.js';
 
 export async function errorHandler(
@@ -10,13 +9,12 @@ export async function errorHandler(
   reply: FastifyReply
 ): Promise<void> {
   // Log error
-  logger.error(
-    {
-      err: error,
-      req: request,
-    },
-    'Request error'
-  );
+  console.error('Request error:', {
+    error: error.message,
+    stack: error.stack,
+    url: request.url,
+    method: request.method,
+  });
   
   // Handle AppError (our custom errors)
   if (error instanceof AppError) {

@@ -1,17 +1,16 @@
 import { startServer } from './interfaces/http/server.js';
-import { logger } from './shared/logger.js';
 
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error({ reason, promise }, 'Unhandled Rejection');
+  console.error('Unhandled Rejection:', reason);
   process.exit(1);
 });
 
 process.on('uncaughtException', (error) => {
-  logger.error({ error }, 'Uncaught Exception');
+  console.error('Uncaught Exception:', error);
   process.exit(1);
 });
 
 startServer().catch((error) => {
-  logger.error({ error }, 'Failed to start application');
+  console.error('Failed to start application:', error);
   process.exit(1);
 });

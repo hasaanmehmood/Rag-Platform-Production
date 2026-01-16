@@ -1,6 +1,5 @@
 import pg from 'pg';
 import { config } from '../../config/index.js';
-import { logger } from '../../shared/logger.js';
 
 const { Pool } = pg;
 
@@ -12,11 +11,11 @@ export const pool = new Pool({
 });
 
 pool.on('connect', () => {
-  logger.debug('New database connection established');
+  console.log('New database connection established');
 });
 
 pool.on('error', (err) => {
-  logger.error({ err }, 'Unexpected database error');
+  console.error('Unexpected database error:', err);
 });
 
 export const query = async <T = any>(
@@ -27,10 +26,10 @@ export const query = async <T = any>(
   try {
     const result = await pool.query<T>(text, params);
     const duration = Date.now() - start;
-    logger.debug({ text, duration, rows: result.rowCount }, 'Executed query');
+    console.log('Query executed:', { text: text.substring(0, 50), duration, rows: result.rowCount });
     return result;
   } catch (error) {
-    logger.error({ error, text }, 'Query error');
+    console.error('Query error:', error);
     throw error;
   }
 };
@@ -41,7 +40,7 @@ export const getClient = async () => {
 
 export const closePool = async () => {
   await pool.end();
-  logger.info('Database pool closed');
+  console.log('Database pool closed');
 };
 
 export default { query, getClient, closePool };

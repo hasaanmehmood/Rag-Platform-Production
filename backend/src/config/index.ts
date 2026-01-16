@@ -19,9 +19,16 @@ const configSchema = z.object({
     chatModel: z.string().default('gpt-4-1106-preview'),
   }),
   
-  database: z.object({
-    url: z.string().url(),
-  }),
+ database: z.object({
+  url: z
+    .string()
+    .min(1)
+    .refine(
+      v => v.startsWith('postgres://') || v.startsWith('postgresql://'),
+      { message: 'DATABASE_URL must be a PostgreSQL connection string' }
+    ),
+}),
+
   
   jwt: z.object({
     secret: z.string().min(32),

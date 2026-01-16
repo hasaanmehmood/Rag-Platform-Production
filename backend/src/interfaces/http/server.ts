@@ -4,13 +4,22 @@ import helmet from '@fastify/helmet';
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
 import { config } from '../../config/index.js';
-import { logger } from '../../shared/logger.js';
 import { registerRoutes } from './routes/index.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
 export async function createServer() {
   const fastify = Fastify({
-    logger: logger,
+    logger: {
+      level: 'info',
+      transport: config.nodeEnv === 'development' ? {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'SYS:HH:MM:ss',
+          ignore: 'pid,hostname',
+        },
+      } : undefined,
+    },
     requestIdHeader: 'x-request-id',
     requestIdLogLabel: 'reqId',
     disableRequestLogging: false,
@@ -19,7 +28,7 @@ export async function createServer() {
   
   // Security headers
   await fastify.register(helmet, {
-    contentSecurityPolicy: false, // Disable for API
+    contentSecurityPolicy: false,
   });
   
   // CORS
@@ -62,16 +71,14 @@ export async function startServer() {
       host: '0.0.0.0',
     });
     
-    logger.info(
-      `Server listening on http://0.0.0.0:${config.port}`
-    );
+    console.log(`Server listening on http://0.0.0.0:${config.port}`);
     
     // Graceful shutdown
     const signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];
     
     signals.forEach((signal) => {
       process.on(signal, async () => {
-        logger.info(`Received ${signal}, closing server...`);
+        console.log(`Received ${signal}, closing server...`);
         await fastify.close();
         process.exit(0);
       });
@@ -79,7 +86,7 @@ export async function startServer() {
     
     return fastify;
   } catch (error) {
-    logger.error({ error }, 'Failed to start server');
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 }

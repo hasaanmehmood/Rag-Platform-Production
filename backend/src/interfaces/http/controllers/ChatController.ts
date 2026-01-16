@@ -8,7 +8,7 @@ import { HTTP_STATUS } from '../../../shared/constants.js';
 import { NotFoundError } from '../../../application/errors/AppError.js';
 
 export class ChatController {
-  private sendMessage: SendMessage;
+  private sendMessageUseCase: SendMessage;
   private chatRepository: PostgresChatRepository;
   
   constructor() {
@@ -16,7 +16,7 @@ export class ChatController {
     const chunkRepository = new PostgresChunkRepository();
     const embeddingService = new OpenAIEmbeddingService();
     
-    this.sendMessage = new SendMessage(
+    this.sendMessageUseCase = new SendMessage(
       this.chatRepository,
       chunkRepository,
       embeddingService
@@ -70,7 +70,7 @@ export class ChatController {
     });
     
     try {
-      const generator = this.sendMessage.execute(
+      const generator = this.sendMessageUseCase.execute(
         sessionId,
         request.user.id,
         content,
