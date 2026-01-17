@@ -4,7 +4,6 @@ import { Document } from '../../../domain/entities/Document.js';
 import { DOCUMENT_STATUS } from '../../../shared/constants.js';
 import { ValidationError } from '../../errors/AppError.js';
 import { config } from '../../../config/index.js';
-import { logger } from '../../../shared/logger.js';
 import crypto from 'crypto';
 
 export class UploadDocument {
@@ -60,11 +59,11 @@ export class UploadDocument {
         metadata: {},
       });
       
-      logger.info({ documentId: document.id, userId }, 'Document uploaded successfully');
+      console.log('Document uploaded successfully:', { documentId: document.id, userId });
       
       return document;
     } catch (error) {
-      logger.error({ error, userId }, 'Failed to upload document');
+      console.error('Failed to upload document:', error);
       throw error;
     }
   }

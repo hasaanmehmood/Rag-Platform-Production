@@ -1,6 +1,5 @@
 import { openaiClient } from '../external/openai-client.js';
 import { config } from '../../config/index.js';
-import { logger } from '../../shared/logger.js';
 
 export interface IEmbeddingService {
   generateEmbedding(text: string): Promise<number[]>;
@@ -17,7 +16,7 @@ export class OpenAIEmbeddingService implements IEmbeddingService {
       
       return response.data[0].embedding;
     } catch (error) {
-      logger.error({ error }, 'Failed to generate embedding');
+      console.error('Failed to generate embedding:', error);
       throw error;
     }
   }
@@ -31,7 +30,7 @@ export class OpenAIEmbeddingService implements IEmbeddingService {
       
       return response.data.map(d => d.embedding);
     } catch (error) {
-      logger.error({ error }, 'Failed to generate embeddings');
+      console.error('Failed to generate embeddings:', error);
       throw error;
     }
   }

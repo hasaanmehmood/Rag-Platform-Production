@@ -1,5 +1,4 @@
 import { supabaseClient } from '../external/supabase-client.js';
-import { logger } from '../../shared/logger.js';
 
 export interface IStorageService {
   uploadFile(bucket: string, path: string, file: Buffer, contentType: string): Promise<string>;
@@ -28,7 +27,7 @@ export class SupabaseStorageService implements IStorageService {
       
       return data.path;
     } catch (error) {
-      logger.error({ error, bucket, path }, 'Failed to upload file');
+      console.error('Failed to upload file:', error);
       throw error;
     }
   }
@@ -43,7 +42,7 @@ export class SupabaseStorageService implements IStorageService {
         throw error;
       }
     } catch (error) {
-      logger.error({ error, bucket, path }, 'Failed to delete file');
+      console.error('Failed to delete file:', error);
       throw error;
     }
   }

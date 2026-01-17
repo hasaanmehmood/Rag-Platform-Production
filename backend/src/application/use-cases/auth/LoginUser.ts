@@ -3,7 +3,6 @@ import { IUserRepository } from '../../../domain/repositories/IUserRepository.js
 import { UserWithAuth } from '../../../domain/entities/User.js';
 import { LoginDTO } from '../../dto/auth.dto.js';
 import { UnauthorizedError, InternalError } from '../../errors/AppError.js';
-import { logger } from '../../../shared/logger.js';
 
 export class LoginUser {
   constructor(private userRepository: IUserRepository) {}
@@ -19,7 +18,12 @@ export class LoginUser {
         throw new UnauthorizedError('Invalid credentials');
       }
       
-      const role = await this.userRepository.getUserRole(data.user.id);
+      let role = 'user';
+      try {
+        role = await this.userRepository.getUserRole(data.user.id);
+      } catch (roleError) {
+        console.error('Failed to get user role (using default):', roleError);
+      }
       
       return {
         id: data.user.id,
@@ -35,7 +39,7 @@ export class LoginUser {
       if (error instanceof UnauthorizedError) {
         throw error;
       }
-      logger.error({ error }, 'Error in LoginUser use case');
+      console.error('Error in LoginUser use case:', error);
       throw new InternalError('Failed to login');
     }
   }

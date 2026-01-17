@@ -21,7 +21,7 @@ export class AuthController {
   ): Promise<void> {
     const user = await this.registerUser.execute(request.body);
     
-    reply.status(HTTP_STATUS.CREATED).send({
+    return reply.status(HTTP_STATUS.CREATED).send({
       user: {
         id: user.id,
         email: user.email,
@@ -39,7 +39,7 @@ export class AuthController {
   ): Promise<void> {
     const user = await this.loginUser.execute(request.body);
     
-    reply.status(HTTP_STATUS.OK).send({
+    return reply.status(HTTP_STATUS.OK).send({
       user: {
         id: user.id,
         email: user.email,
@@ -52,14 +52,13 @@ export class AuthController {
   }
   
   async me(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    reply.status(HTTP_STATUS.OK).send({
+    return reply.status(HTTP_STATUS.OK).send({
       user: request.user,
     });
   }
   
   async logout(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    // Supabase handles token invalidation automatically
-    reply.status(HTTP_STATUS.OK).send({
+    return reply.status(HTTP_STATUS.OK).send({
       success: true,
     });
   }

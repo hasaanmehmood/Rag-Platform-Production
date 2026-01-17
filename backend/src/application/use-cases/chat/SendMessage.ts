@@ -5,7 +5,6 @@ import { openaiClient } from '../../../infrastructure/external/openai-client.js'
 import { MESSAGE_ROLES } from '../../../shared/constants.js';
 import { NotFoundError } from '../../errors/AppError.js';
 import { config } from '../../../config/index.js';
-import { logger } from '../../../shared/logger.js';
 
 export class SendMessage {
   constructor(
@@ -120,7 +119,7 @@ ${context}`,
       
       yield { type: 'done', data: null };
     } catch (error) {
-      logger.error({ error, sessionId, userId }, 'Failed to send message');
+      console.error('Failed to send message:', error);
       throw error;
     }
   }

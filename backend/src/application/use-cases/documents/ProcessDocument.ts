@@ -5,7 +5,6 @@ import { IChunkingService } from '../../../infrastructure/services/RecursiveChun
 import { IEmbeddingService } from '../../../infrastructure/services/OpenAIEmbeddingService.js';
 import { supabaseClient } from '../../../infrastructure/external/supabase-client.js';
 import { DOCUMENT_STATUS } from '../../../shared/constants.js';
-import { logger } from '../../../shared/logger.js';
 
 export class ProcessDocument {
   constructor(
@@ -18,7 +17,7 @@ export class ProcessDocument {
   
   async execute(documentId: string): Promise<void> {
     try {
-      logger.info({ documentId }, 'Starting document processing');
+      console.log('Starting document processing:', documentId);
       
       // Get document
       const document = await this.documentRepository.findById(documentId, documentId);
@@ -38,7 +37,7 @@ export class ProcessDocument {
       const buffer = Buffer.from(await fileData.arrayBuffer());
       
       // Parse document
-      logger.debug({ documentId }, 'Parsing document');
+      console.log('Parsing document:', documentId);
       const text = await this.parserService.parseDocument(buffer, document.fileType);
       
       if (!text || text.trim().length === 0) {
@@ -46,7 +45,7 @@ export class ProcessDocument {
       }
       
       // Chunk text
-      logger.debug({ documentId }, 'Chunking text');
+      console.log('Chunking text:', documentId);
       const chunks = this.chunkingService.chunkText(text);
       
       if (chunks.length === 0) {
@@ -54,7 +53,7 @@ export class ProcessDocument {
       }
       
       // Generate embeddings in batches
-      logger.debug({ documentId, chunkCount: chunks.length }, 'Generating embeddings');
+      console.log('Generating embeddings:', { documentId, chunkCount: chunks.length });
       const batchSize = 100;
       const allEmbeddings: number[][] = [];
       
@@ -67,7 +66,7 @@ export class ProcessDocument {
       }
       
       // Store chunks with embeddings
-      logger.debug({ documentId }, 'Storing chunks');
+      console.log('Storing chunks:', documentId);
       const chunksToStore = chunks.map((chunk, index) => ({
         documentId: document.id,
         userId: document.userId,
@@ -82,12 +81,9 @@ export class ProcessDocument {
       // Update document status
       await this.documentRepository.updateStatus(documentId, DOCUMENT_STATUS.READY);
       
-      logger.info(
-        { documentId, chunkCount: chunks.length },
-        'Document processing completed'
-      );
+      console.log('Document processing completed:', { documentId, chunkCount: chunks.length });
     } catch (error) {
-      logger.error({ error, documentId }, 'Document processing failed');
+      console.error('Document processing failed:', error);
       
       await this.documentRepository.updateStatus(
         documentId,

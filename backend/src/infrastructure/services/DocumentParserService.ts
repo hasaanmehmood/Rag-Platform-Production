@@ -1,6 +1,5 @@
 import pdfParse from 'pdf-parse';
 import mammoth from 'mammoth';
-import { logger } from '../../shared/logger.js';
 
 export interface IDocumentParserService {
   parseDocument(buffer: Buffer, fileType: string): Promise<string>;
@@ -20,7 +19,7 @@ export class DocumentParserService implements IDocumentParserService {
           throw new Error(`Unsupported file type: ${fileType}`);
       }
     } catch (error) {
-      logger.error({ error, fileType }, 'Failed to parse document');
+      console.error('Failed to parse document:', error);
       throw error;
     }
   }
