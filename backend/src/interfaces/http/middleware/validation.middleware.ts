@@ -1,6 +1,5 @@
 import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify';
 import { ZodSchema } from 'zod';
-import { ValidationError } from '../../../application/errors/AppError.js';
 
 export function validateBody(schema: ZodSchema) {
   return async (

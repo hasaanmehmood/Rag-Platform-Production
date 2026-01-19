@@ -55,7 +55,7 @@ export class DocumentController {
       console.error('Document processing failed:', err);
     });
     
-    reply.status(HTTP_STATUS.CREATED).send({ document });
+    return reply.status(HTTP_STATUS.CREATED).send({ document });
   }
   
   async list(
@@ -67,7 +67,7 @@ export class DocumentController {
       request.query
     );
     
-    reply.status(HTTP_STATUS.OK).send({
+    return reply.status(HTTP_STATUS.OK).send({
       documents,
       total,
       page: request.query.page || 1,
@@ -88,7 +88,7 @@ export class DocumentController {
       throw new NotFoundError('Document');
     }
     
-    reply.status(HTTP_STATUS.OK).send({ document });
+    return reply.status(HTTP_STATUS.OK).send({ document });
   }
   
   async delete(
@@ -106,6 +106,6 @@ export class DocumentController {
     
     await this.documentRepository.delete(request.params.id, request.user.id);
     
-    reply.status(HTTP_STATUS.OK).send({ success: true });
+    return reply.status(HTTP_STATUS.OK).send({ success: true });
   }
 }

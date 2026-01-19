@@ -12,7 +12,9 @@ export class PostgresChunkRepository implements IChunkRepository {
       await client.query('BEGIN');
       
       for (const chunk of chunks) {
-        const embeddingStr = `[${chunk.embedding!.join(',')}]`;
+        // Format embedding as proper array string for pgvector
+        const embeddingStr = JSON.stringify(chunk.embedding);
+        
         await client.query(
           `INSERT INTO document_chunks 
            (document_id, user_id, chunk_index, content, embedding, metadata)
@@ -43,7 +45,7 @@ export class PostgresChunkRepository implements IChunkRepository {
     topK: number,
     documentIds?: string[]
   ): Promise<Array<DocumentChunk & { score: number }>> {
-    const embeddingStr = `[${embedding.join(',')}]`;
+    const embeddingStr = JSON.stringify(embedding);
     
     let whereClause = 'WHERE user_id = $2';
     const params: any[] = [embeddingStr, userId, topK];

@@ -5,7 +5,6 @@ import { PostgresChunkRepository } from '../../../infrastructure/database/reposi
 import { OpenAIEmbeddingService } from '../../../infrastructure/services/OpenAIEmbeddingService.js';
 import { CreateSessionDTO, SendMessageDTO } from '../../../application/dto/chat.dto.js';
 import { HTTP_STATUS } from '../../../shared/constants.js';
-import { NotFoundError } from '../../../application/errors/AppError.js';
 
 export class ChatController {
   private sendMessageUseCase: SendMessage;
@@ -32,12 +31,12 @@ export class ChatController {
       request.body.title
     );
     
-    reply.status(HTTP_STATUS.CREATED).send({ session });
+    return reply.status(HTTP_STATUS.CREATED).send({ session });
   }
   
   async listSessions(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const sessions = await this.chatRepository.findSessionsByUserId(request.user.id);
-    reply.status(HTTP_STATUS.OK).send({ sessions });
+    return reply.status(HTTP_STATUS.OK).send({ sessions });
   }
   
   async getMessages(
@@ -49,7 +48,7 @@ export class ChatController {
       request.user.id
     );
     
-    reply.status(HTTP_STATUS.OK).send({ messages });
+    return reply.status(HTTP_STATUS.OK).send({ messages });
   }
   
   async sendMessage(
@@ -62,7 +61,7 @@ export class ChatController {
     const { sessionId } = request.params;
     const { content, documentIds } = request.body;
     
-    // Set up SSE headers
+    // Set up SSE headers - DON'T use reply.send() or reply.status()
     reply.raw.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
@@ -102,6 +101,6 @@ export class ChatController {
       request.user.id
     );
     
-    reply.status(HTTP_STATUS.OK).send({ success: true });
+    return reply.status(HTTP_STATUS.OK).send({ success: true });
   }
 }

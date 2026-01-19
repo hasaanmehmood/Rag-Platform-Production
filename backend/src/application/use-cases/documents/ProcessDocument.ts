@@ -5,6 +5,7 @@ import { IChunkingService } from '../../../infrastructure/services/RecursiveChun
 import { IEmbeddingService } from '../../../infrastructure/services/OpenAIEmbeddingService.js';
 import { supabaseClient } from '../../../infrastructure/external/supabase-client.js';
 import { DOCUMENT_STATUS } from '../../../shared/constants.js';
+import { query } from '../../../infrastructure/database/postgres.js';
 
 export class ProcessDocument {
   constructor(
@@ -19,8 +20,13 @@ export class ProcessDocument {
     try {
       console.log('Starting document processing:', documentId);
       
-      // Get document
-      const document = await this.documentRepository.findById(documentId, documentId);
+      // Get document without user_id check (we're in background processing)
+      const result = await query<any>(
+        'SELECT * FROM documents WHERE id = $1',
+        [documentId]
+      );
+      
+      const document = result.rows[0];
       if (!document) {
         throw new Error('Document not found');
       }
@@ -28,17 +34,17 @@ export class ProcessDocument {
       // Download file from storage
       const { data: fileData, error: downloadError } = await supabaseClient.storage
         .from('documents')
-        .download(document.storagePath);
+        .download(document.storage_path);
       
       if (downloadError || !fileData) {
-        throw new Error('Failed to download document');
+        throw new Error('Failed to download document: ' + (downloadError?.message || 'Unknown error'));
       }
       
       const buffer = Buffer.from(await fileData.arrayBuffer());
       
       // Parse document
       console.log('Parsing document:', documentId);
-      const text = await this.parserService.parseDocument(buffer, document.fileType);
+      const text = await this.parserService.parseDocument(buffer, document.file_type);
       
       if (!text || text.trim().length === 0) {
         throw new Error('No text content extracted from document');
@@ -69,7 +75,7 @@ export class ProcessDocument {
       console.log('Storing chunks:', documentId);
       const chunksToStore = chunks.map((chunk, index) => ({
         documentId: document.id,
-        userId: document.userId,
+        userId: document.user_id,
         chunkIndex: chunk.index,
         content: chunk.content,
         embedding: allEmbeddings[index],
