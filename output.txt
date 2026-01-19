@@ -1,0 +1,128 @@
+data: {"type":"sources","data":[{"chunkId":"629acb36-6e51-45fb-a769-9613b8a0bcbc","documentId":"f0b9b018-e1e8-4650-b70e-9242e028246c","content":"This is a test document for RAG processing. It contains sample text to demonstrate the document upload and embedding generation features.","score":0.158903750573252},{"chunkId":"40a80dbe-b45a-4954-a70b-80750aa2805b","documentId":"e67b678e-6284-4c7a-a4b8-c5e49b105b9c","content":"This is a test document for RAG processing. It contains sample text to demonstrate the document upload and embedding generation features.","score":0.158897016512996},{"chunkId":"ee70d8af-fc3a-4bed-bbcc-8de748ea51bc","documentId":"76faff1c-8ecd-4fc1-83fd-f195b42afabb","content":"This is a test document for RAG processing. It contains sample text to demonstrate the document upload and embedding generation features.","score":0.158875449098734}]}
+
+data: {"type":"token","data":"The"}
+
+data: {"type":"token","data":" key"}
+
+data: {"type":"token","data":" points"}
+
+data: {"type":"token","data":" from"}
+
+data: {"type":"token","data":" the"}
+
+data: {"type":"token","data":" documents"}
+
+data: {"type":"token","data":" provided"}
+
+data: {"type":"token","data":" are"}
+
+data: {"type":"token","data":":\n\n"}
+
+data: {"type":"token","data":"-"}
+
+data: {"type":"token","data":" The"}
+
+data: {"type":"token","data":" documents"}
+
+data: {"type":"token","data":" are"}
+
+data: {"type":"token","data":" test"}
+
+data: {"type":"token","data":" documents"}
+
+data: {"type":"token","data":" for"}
+
+data: {"type":"token","data":" R"}
+
+data: {"type":"token","data":"AG"}
+
+data: {"type":"token","data":" processing"}
+
+data: {"type":"token","data":".\n"}
+
+data: {"type":"token","data":"-"}
+
+data: {"type":"token","data":" Their"}
+
+data: {"type":"token","data":" purpose"}
+
+data: {"type":"token","data":" is"}
+
+data: {"type":"token","data":" to"}
+
+data: {"type":"token","data":" demonstrate"}
+
+data: {"type":"token","data":" the"}
+
+data: {"type":"token","data":" features"}
+
+data: {"type":"token","data":" of"}
+
+data: {"type":"token","data":" document"}
+
+data: {"type":"token","data":" upload"}
+
+data: {"type":"token","data":".\n"}
+
+data: {"type":"token","data":"-"}
+
+data: {"type":"token","data":" They"}
+
+data: {"type":"token","data":" also"}
+
+data: {"type":"token","data":" showcase"}
+
+data: {"type":"token","data":" embedding"}
+
+data: {"type":"token","data":" generation"}
+
+data: {"type":"token","data":" features"}
+
+data: {"type":"token","data":"."}
+
+data: {"type":"token","data":" \n\n"}
+
+data: {"type":"token","data":"All"}
+
+data: {"type":"token","data":" three"}
+
+data: {"type":"token","data":" documents"}
+
+data: {"type":"token","data":" ["}
+
+data: {"type":"token","data":"1"}
+
+data: {"type":"token","data":"],"}
+
+data: {"type":"token","data":" ["}
+
+data: {"type":"token","data":"2"}
+
+data: {"type":"token","data":"],"}
+
+data: {"type":"token","data":" ["}
+
+data: {"type":"token","data":"3"}
+
+data: {"type":"token","data":"]"}
+
+data: {"type":"token","data":" contain"}
+
+data: {"type":"token","data":" the"}
+
+data: {"type":"token","data":" same"}
+
+data: {"type":"token","data":" sample"}
+
+data: {"type":"token","data":" text"}
+
+data: {"type":"token","data":" with"}
+
+data: {"type":"token","data":" this"}
+
+data: {"type":"token","data":" information"}
+
+data: {"type":"token","data":"."}
+
+data: {"type":"done","data":null}
+
