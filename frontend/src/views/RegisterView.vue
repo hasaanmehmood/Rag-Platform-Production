@@ -1,68 +1,68 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+  <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
     <div class="max-w-md w-full">
       <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">RAG Platform</h1>
-        <p class="text-gray-600">Create your account</p>
+        <h1 class="text-3xl font-bold text-gray-900">RAG Platform</h1>
+        <p class="text-gray-600 mt-2">Create your account</p>
       </div>
 
-      <div class="card">
-        <form @submit.prevent="handleRegister" class="space-y-6">
+      <div class="bg-white rounded-lg shadow-md p-8">
+        <form @submit.prevent="handleRegister" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
-            <input
-              v-model="name"
-              type="text"
-              class="input"
-              placeholder="John Doe"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               v-model="email"
               type="email"
               required
-              class="input"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               v-model="password"
               type="password"
               required
-              minlength="8"
-              class="input"
+              minlength="6"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="••••••••"
             />
-            <p class="mt-1 text-xs text-gray-500">At least 8 characters</p>
+            <p class="text-xs text-gray-500 mt-1">At least 6 characters</p>
           </div>
 
-          <div v-if="authStore.error" class="text-red-600 text-sm">
-            {{ authStore.error }}
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <input
+              v-model="confirmPassword"
+              type="password"
+              required
+              minlength="6"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <div v-if="error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            {{ error }}
           </div>
 
           <button
             type="submit"
             :disabled="authStore.loading"
-            class="w-full btn-primary"
+            class="w-full py-2 px-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-colors"
           >
             {{ authStore.loading ? 'Creating account...' : 'Sign Up' }}
           </button>
         </form>
 
-        <div class="mt-6 text-center">
-          <p class="text-sm text-gray-600">
-            Already have an account?
-            <router-link to="/login" class="text-primary-600 hover:text-primary-700 font-medium">
-              Sign in
-            </router-link>
-          </p>
-        </div>
+        <p class="text-center text-sm text-gray-600 mt-4">
+          Already have an account?
+          <router-link to="/login" class="text-primary-600 hover:text-primary-700 font-medium">
+            Sign in
+          </router-link>
+        </p>
       </div>
     </div>
   </div>
@@ -76,20 +76,47 @@ import { useAuthStore } from '@/stores/auth.store';
 const router = useRouter();
 const authStore = useAuthStore();
 
-const name = ref('');
 const email = ref('');
 const password = ref('');
+const confirmPassword = ref('');
+const error = ref('');
 
-const handleRegister = async () => {
-  try {
-    await authStore.register({
-      email: email.value,
-      password: password.value,
-      name: name.value || undefined,
-    });
-    router.push('/documents');
-  } catch (error) {
-    console.error('Registration failed:', error);
+async function handleRegister() {
+  error.value = '';
+
+  // Validate passwords match
+  if (password.value !== confirmPassword.value) {
+    error.value = 'Passwords do not match';
+    return;
   }
-};
+
+  if (password.value.length < 6) {
+    error.value = 'Password must be at least 6 characters';
+    return;
+  }
+
+  try {
+    await authStore.register({ 
+      email: email.value, 
+      password: password.value 
+    });
+    router.push('/chat');
+  } catch (err: any) {
+    // Check various error formats
+    const errorMessage = 
+      err.response?.data?.error || 
+      err.response?.data?.message || 
+      err.message || 
+      'Registration failed. Please try again.';
+    
+    error.value = errorMessage;
+    
+    // If user already exists, suggest login
+    if (errorMessage.toLowerCase().includes('already exists')) {
+      error.value += '. Try logging in instead.';
+    }
+    
+    console.error('Registration error:', err);
+  }
+}
 </script>

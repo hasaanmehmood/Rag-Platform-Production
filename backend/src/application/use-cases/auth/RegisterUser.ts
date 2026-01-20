@@ -1,53 +1,45 @@
-import { supabaseAnonClient } from '../../../infrastructure/external/supabase-client.js';
 import { IUserRepository } from '../../../domain/repositories/IUserRepository.js';
-import { UserWithAuth } from '../../../domain/entities/User.js';
 import { RegisterDTO } from '../../dto/auth.dto.js';
-import { ConflictError, InternalError } from '../../errors/AppError.js';
+import { ConflictError, ValidationError } from '../../errors/AppError.js';
 
 export class RegisterUser {
   constructor(private userRepository: IUserRepository) {}
   
-  async execute(dto: RegisterDTO): Promise<UserWithAuth> {
+  async execute(data: RegisterDTO) {
     try {
-      // Register user with Supabase Auth
-      const { data, error } = await supabaseAnonClient.auth.signUp({
-        email: dto.email,
-        password: dto.password,
-        options: {
-          data: {
-            name: dto.name,
-          },
-        },
-      });
+      // Validate email format
+      if (!data.email || !data.email.includes('@')) {
+        throw new ValidationError('Invalid email format');
+      }
+
+      // Validate password strength
+      if (!data.password || data.password.length < 6) {
+        throw new ValidationError('Password must be at least 6 characters long');
+      }
+
+      // Attempt to create user
+      const user = await this.userRepository.create(data);
       
-      if (error || !data.user || !data.session) {
-        console.error('Registration failed:', error);
-        throw new InternalError('Registration failed: ' + (error?.message || 'Unknown error'));
+      return user;
+    } catch (error: any) {
+      // Handle Supabase Auth errors
+      if (error.__isAuthError) {
+        if (error.code === 'user_already_exists') {
+          throw new ConflictError('An account with this email already exists');
+        }
+        if (error.status === 422) {
+          throw new ValidationError(error.message || 'Invalid registration data');
+        }
       }
       
-      // Set default user role (in background, ignore errors)
-      try {
-        await this.userRepository.setUserRole(data.user.id, 'user');
-      } catch (roleError) {
-        console.error('Failed to set user role (non-critical):', roleError);
-      }
-      
-      return {
-        id: data.user.id,
-        email: data.user.email!,
-        name: dto.name,
-        role: 'user',
-        createdAt: new Date(data.user.created_at),
-        updatedAt: new Date(data.user.updated_at || data.user.created_at),
-        accessToken: data.session.access_token,
-        refreshToken: data.session.refresh_token,
-      };
-    } catch (error) {
-      if (error instanceof ConflictError || error instanceof InternalError) {
+      // Re-throw our custom errors
+      if (error.name === 'ValidationError' || error.name === 'ConflictError') {
         throw error;
       }
-      console.error('Error in RegisterUser use case:', error);
-      throw new InternalError('Failed to register user');
+
+      // Log unexpected errors
+      console.error('Unexpected registration error:', error);
+      throw new ValidationError('Registration failed. Please try again.');
     }
   }
 }

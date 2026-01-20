@@ -1,11 +1,8 @@
-import { ErrorCode } from '../../shared/constants.js';
-
 export class AppError extends Error {
   constructor(
-    public code: ErrorCode,
-    public statusCode: number,
-    message: string,
-    public details?: any
+    public message: string,
+    public statusCode: number = 500,
+    public code: string = 'INTERNAL_ERROR'
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -14,37 +11,37 @@ export class AppError extends Error {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string, details?: any) {
-    super('VALIDATION_ERROR', 400, message, details);
+  constructor(message: string) {
+    super(message, 400, 'VALIDATION_ERROR');
   }
 }
 
 export class UnauthorizedError extends AppError {
-  constructor(message = 'Unauthorized') {
-    super('UNAUTHORIZED', 401, message);
+  constructor(message: string = 'Unauthorized') {
+    super(message, 401, 'UNAUTHORIZED');
   }
 }
 
 export class ForbiddenError extends AppError {
-  constructor(message = 'Forbidden') {
-    super('FORBIDDEN', 403, message);
+  constructor(message: string = 'Forbidden') {
+    super(message, 403, 'FORBIDDEN');
   }
 }
 
 export class NotFoundError extends AppError {
   constructor(resource: string) {
-    super('NOT_FOUND', 404, `${resource} not found`);
+    super(`${resource} not found`, 404, 'NOT_FOUND');
   }
 }
 
 export class ConflictError extends AppError {
   constructor(message: string) {
-    super('CONFLICT', 409, message);
+    super(message, 409, 'CONFLICT');
   }
 }
 
 export class InternalError extends AppError {
-  constructor(message = 'Internal server error', details?: any) {
-    super('INTERNAL_ERROR', 500, message, details);
+  constructor(message: string) {
+    super(message, 500, 'INTERNAL_ERROR');
   }
 }
