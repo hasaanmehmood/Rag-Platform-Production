@@ -4,6 +4,7 @@ import { UserRole } from '../../shared/constants.js';
 export interface IUserRepository {
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
+  create(user: { id: string; email: string; name?: string }): Promise<User>;
   getUserRole(userId: string): Promise<UserRole>;
   setUserRole(userId: string, role: UserRole): Promise<void>;
 }

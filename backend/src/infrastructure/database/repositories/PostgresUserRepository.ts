@@ -5,6 +5,20 @@ import { query } from '../postgres.js';
 import { supabaseClient } from '../../external/supabase-client.js';
 
 export class PostgresUserRepository implements IUserRepository {
+  async create(user: { id: string; email: string; name?: string }): Promise<User> {
+    // User is created in Supabase Auth, just return the data
+    const role = await this.getUserRole(user.id);
+    
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  }
+  
   async findById(id: string): Promise<User | null> {
     const { data, error } = await supabaseClient.auth.admin.getUserById(id);
     

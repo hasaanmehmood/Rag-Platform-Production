@@ -1,45 +1,59 @@
+import { supabaseAnonClient } from '../../../infrastructure/external/supabase-client.js';
 import { IUserRepository } from '../../../domain/repositories/IUserRepository.js';
+import { UserWithAuth } from '../../../domain/entities/User.js';
 import { RegisterDTO } from '../../dto/auth.dto.js';
-import { ConflictError, ValidationError } from '../../errors/AppError.js';
+import { ConflictError, InternalError } from '../../errors/AppError.js';
+import { USER_ROLES } from '../../../shared/constants.js';
+import { logger } from '../../../shared/logger.js';
 
 export class RegisterUser {
   constructor(private userRepository: IUserRepository) {}
   
-  async execute(data: RegisterDTO) {
+  async execute(dto: RegisterDTO): Promise<UserWithAuth> {
     try {
-      // Validate email format
-      if (!data.email || !data.email.includes('@')) {
-        throw new ValidationError('Invalid email format');
-      }
-
-      // Validate password strength
-      if (!data.password || data.password.length < 6) {
-        throw new ValidationError('Password must be at least 6 characters long');
-      }
-
-      // Attempt to create user
-      const user = await this.userRepository.create(data);
-      
-      return user;
-    } catch (error: any) {
-      // Handle Supabase Auth errors
-      if (error.__isAuthError) {
-        if (error.code === 'user_already_exists') {
-          throw new ConflictError('An account with this email already exists');
-        }
-        if (error.status === 422) {
-          throw new ValidationError(error.message || 'Invalid registration data');
-        }
+      // Check if user already exists
+      const existingUser = await this.userRepository.findByEmail(dto.email);
+      if (existingUser) {
+        throw new ConflictError('User with this email already exists');
       }
       
-      // Re-throw our custom errors
-      if (error.name === 'ValidationError' || error.name === 'ConflictError') {
+      // Register user with Supabase Auth
+      const { data, error } = await supabaseAnonClient.auth.signUp({
+        email: dto.email,
+        password: dto.password,
+        options: {
+          data: {
+            name: dto.name,
+          },
+        },
+      });
+      
+      if (error || !data.user || !data.session) {
+        logger.error({ error }, 'Registration failed');
+        throw new InternalError('Registration failed');
+      }
+      
+      // Set default user role
+      await this.userRepository.setUserRole(data.user.id, USER_ROLES.USER);
+      
+      // Create user record
+      const user = await this.userRepository.create({
+        id: data.user.id,
+        email: data.user.email!,
+        name: dto.name,
+      });
+      
+      return {
+        ...user,
+        accessToken: data.session.access_token,
+        refreshToken: data.session.refresh_token,
+      };
+    } catch (error) {
+      if (error instanceof ConflictError) {
         throw error;
       }
-
-      // Log unexpected errors
-      console.error('Unexpected registration error:', error);
-      throw new ValidationError('Registration failed. Please try again.');
+      logger.error({ error }, 'Error in RegisterUser use case');
+      throw new InternalError('Failed to register user');
     }
   }
 }
