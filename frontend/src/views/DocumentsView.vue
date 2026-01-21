@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
 import { useDocumentStore } from '@/stores/document.store';
 
@@ -97,15 +97,22 @@ const documentStore = useDocumentStore();
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const selectedFile = ref<File | null>(null);
+let pollInterval: ReturnType<typeof setInterval> | null = null;
 
-onMounted(() => {
-  documentStore.fetchDocuments();
-  // Poll for document status updates
-  const interval = setInterval(() => {
-    documentStore.fetchDocuments();
-  }, 5000);
+onMounted(async () => {
+  await documentStore.fetchDocuments();
   
-  return () => clearInterval(interval);
+  // Poll for document status updates every 5 seconds
+  pollInterval = setInterval(async () => {
+    await documentStore.fetchDocuments();
+  }, 5000);
+});
+
+onUnmounted(() => {
+  if (pollInterval) {
+    clearInterval(pollInterval);
+    pollInterval = null;
+  }
 });
 
 const handleFileSelect = (event: Event) => {

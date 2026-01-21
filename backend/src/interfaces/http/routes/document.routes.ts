@@ -10,17 +10,17 @@ export async function documentRoutes(fastify: FastifyInstance): Promise<void> {
   // All document routes require authentication
   fastify.addHook('preHandler', authMiddleware);
   
-  fastify.post('/upload', controller.upload.bind(controller));
+  fastify.post('/upload', async (request, reply) => controller.upload(request, reply));
   
   fastify.get(
     '/',
     {
       preHandler: validateQuery(GetDocumentsSchema),
     },
-    controller.list.bind(controller)
+    async (request, reply) => controller.list(request as any, reply)
   );
   
-  fastify.get('/:id', controller.get.bind(controller));
+  fastify.get('/:id', async (request, reply) => controller.get(request as any, reply));
   
-  fastify.delete('/:id', controller.delete.bind(controller));
+  fastify.delete('/:id', async (request, reply) => controller.delete(request as any, reply));
 }

@@ -12,7 +12,7 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
     {
       preHandler: validateBody(RegisterSchema),
     },
-    controller.register.bind(controller)
+    async (request, reply) => controller.register(request as any, reply)
   );
   
   fastify.post(
@@ -20,7 +20,7 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
     {
       preHandler: validateBody(LoginSchema),
     },
-    controller.login.bind(controller)
+    async (request, reply) => controller.login(request as any, reply)
   );
   
   fastify.get(
@@ -28,7 +28,7 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
     {
       preHandler: authMiddleware,
     },
-    controller.me.bind(controller)
+    async (request, reply) => controller.me(request, reply)
   );
   
   fastify.post(
@@ -36,6 +36,6 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
     {
       preHandler: authMiddleware,
     },
-    controller.logout.bind(controller)
+    async (request, reply) => controller.logout(request, reply)
   );
 }

@@ -3,20 +3,28 @@ import type { Document, DocumentListResponse } from '@/types/document.types';
 
 class DocumentService {
   async upload(file: File): Promise<Document> {
+    console.log('Uploading file:', file.name, file.type, file.size);
+    
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await api.post<{ document: Document }>(
-      '/api/v1/documents/upload',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
+    try {
+      const response = await api.post<{ document: Document }>(
+        '/api/v1/documents/upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
-    return response.data.document;
+      console.log('Upload response:', response.data);
+      return response.data.document;
+    } catch (error) {
+      console.error('Upload error:', error);
+      throw error;
+    }
   }
 
   async list(params?: {
@@ -24,8 +32,16 @@ class DocumentService {
     limit?: number;
     status?: string;
   }): Promise<DocumentListResponse> {
-    const response = await api.get<DocumentListResponse>('/api/v1/documents', params);
-    return response.data;
+    console.log('Fetching documents with params:', params);
+    
+    try {
+      const response = await api.get<DocumentListResponse>('/api/v1/documents', params);
+      console.log('Documents fetched:', response.data?.documents?.length || 0);
+      return response.data;
+    } catch (error) {
+      console.error('List documents error:', error);
+      throw error;
+    }
   }
 
   async get(id: string): Promise<Document> {

@@ -4,8 +4,9 @@ import { IDocumentParserService } from '../../../infrastructure/services/Documen
 import { IChunkingService } from '../../../infrastructure/services/RecursiveChunkingService.js';
 import { IEmbeddingService } from '../../../infrastructure/services/OpenAIEmbeddingService.js';
 import { supabaseClient } from '../../../infrastructure/external/supabase-client.js';
-import { DOCUMENT_STATUS } from '../../../shared/constants.js';
 import { query } from '../../../infrastructure/database/postgres.js';
+import { DOCUMENT_STATUS } from '../../../shared/constants.js';
+import logger from '../../../shared/logger.js';
 
 export class ProcessDocument {
   constructor(
@@ -18,18 +19,19 @@ export class ProcessDocument {
   
   async execute(documentId: string): Promise<void> {
     try {
-      console.log('Starting document processing:', documentId);
+      logger.info({ documentId }, 'Starting document processing');
       
-      // Get document without user_id check (we're in background processing)
+      // Get document - use service key to bypass RLS for processing
       const result = await query<any>(
         'SELECT * FROM documents WHERE id = $1',
         [documentId]
       );
       
-      const document = result.rows[0];
-      if (!document) {
+      if (!result.rows[0]) {
         throw new Error('Document not found');
       }
+      
+      const document = result.rows[0];
       
       // Download file from storage
       const { data: fileData, error: downloadError } = await supabaseClient.storage
@@ -37,13 +39,13 @@ export class ProcessDocument {
         .download(document.storage_path);
       
       if (downloadError || !fileData) {
-        throw new Error('Failed to download document: ' + (downloadError?.message || 'Unknown error'));
+        throw new Error('Failed to download document');
       }
       
       const buffer = Buffer.from(await fileData.arrayBuffer());
       
       // Parse document
-      console.log('Parsing document:', documentId);
+      logger.debug({ documentId }, 'Parsing document');
       const text = await this.parserService.parseDocument(buffer, document.file_type);
       
       if (!text || text.trim().length === 0) {
@@ -51,7 +53,7 @@ export class ProcessDocument {
       }
       
       // Chunk text
-      console.log('Chunking text:', documentId);
+      logger.debug({ documentId }, 'Chunking text');
       const chunks = this.chunkingService.chunkText(text);
       
       if (chunks.length === 0) {
@@ -59,7 +61,7 @@ export class ProcessDocument {
       }
       
       // Generate embeddings in batches
-      console.log('Generating embeddings:', { documentId, chunkCount: chunks.length });
+      logger.debug({ documentId, chunkCount: chunks.length }, 'Generating embeddings');
       const batchSize = 100;
       const allEmbeddings: number[][] = [];
       
@@ -72,7 +74,7 @@ export class ProcessDocument {
       }
       
       // Store chunks with embeddings
-      console.log('Storing chunks:', documentId);
+      logger.debug({ documentId }, 'Storing chunks');
       const chunksToStore = chunks.map((chunk, index) => ({
         documentId: document.id,
         userId: document.user_id,
@@ -87,9 +89,12 @@ export class ProcessDocument {
       // Update document status
       await this.documentRepository.updateStatus(documentId, DOCUMENT_STATUS.READY);
       
-      console.log('Document processing completed:', { documentId, chunkCount: chunks.length });
+      logger.info(
+        { documentId, chunkCount: chunks.length },
+        'Document processing completed'
+      );
     } catch (error) {
-      console.error('Document processing failed:', error);
+      logger.error({ error, documentId }, 'Document processing failed');
       
       await this.documentRepository.updateStatus(
         documentId,
@@ -101,3 +106,5 @@ export class ProcessDocument {
     }
   }
 }
+
+export default ProcessDocument;

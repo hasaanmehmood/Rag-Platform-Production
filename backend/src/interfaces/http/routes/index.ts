@@ -9,12 +9,9 @@ export async function registerRoutes(fastify: FastifyInstance): Promise<void> {
   await fastify.register(healthRoutes);
   
   // API v1 routes
-  await fastify.register(
-    async (instance) => {
-      await instance.register(authRoutes, { prefix: '/auth' });
-      await instance.register(documentRoutes, { prefix: '/documents' });
-      await instance.register(chatRoutes, { prefix: '/chat' });
-    },
-    { prefix: '/api/v1' }
-  );
+  await fastify.register(async (instance) => {
+    await instance.register(authRoutes, { prefix: '/auth' });
+    await instance.register(documentRoutes, { prefix: '/documents' });
+    await instance.register(chatRoutes, { prefix: '/chat' });
+  }, { prefix: '/api/v1' });
 }

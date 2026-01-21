@@ -4,7 +4,7 @@ import { UserWithAuth } from '../../../domain/entities/User.js';
 import { RegisterDTO } from '../../dto/auth.dto.js';
 import { ConflictError, InternalError } from '../../errors/AppError.js';
 import { USER_ROLES } from '../../../shared/constants.js';
-import { logger } from '../../../shared/logger.js';
+import logger from '../../../shared/logger.js';
 
 export class RegisterUser {
   constructor(private userRepository: IUserRepository) {}
@@ -36,15 +36,13 @@ export class RegisterUser {
       // Set default user role
       await this.userRepository.setUserRole(data.user.id, USER_ROLES.USER);
       
-      // Create user record
-      const user = await this.userRepository.create({
+      return {
         id: data.user.id,
         email: data.user.email!,
         name: dto.name,
-      });
-      
-      return {
-        ...user,
+        role: USER_ROLES.USER,
+        createdAt: new Date(data.user.created_at),
+        updatedAt: new Date(data.user.updated_at || data.user.created_at),
         accessToken: data.session.access_token,
         refreshToken: data.session.refresh_token,
       };
@@ -57,3 +55,5 @@ export class RegisterUser {
     }
   }
 }
+
+export default RegisterUser;

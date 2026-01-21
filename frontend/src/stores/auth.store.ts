@@ -14,8 +14,10 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await authService.register(data);
       user.value = response.user;
+      console.log('✅ Registration successful, user:', user.value);
     } catch (err: any) {
-      error.value = err.response?.data?.error?.message || 'Registration failed';
+      console.error('❌ Registration error:', err);
+      error.value = err.response?.data?.error?.message || err.message || 'Registration failed';
       throw err;
     } finally {
       loading.value = false;
@@ -28,8 +30,10 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await authService.login(data);
       user.value = response.user;
+      console.log('✅ Login successful, user:', user.value);
     } catch (err: any) {
-      error.value = err.response?.data?.error?.message || 'Login failed';
+      console.error('❌ Login error:', err);
+      error.value = err.response?.data?.error?.message || err.message || 'Login failed';
       throw err;
     } finally {
       loading.value = false;

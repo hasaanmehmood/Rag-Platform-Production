@@ -19,5 +19,15 @@
     "clean": {
       "cache": false
     }
+
+    
   }
+,  
+  "devDependencies": {
+    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49"
+  }
+
+  
 }

@@ -70,6 +70,7 @@ const password = ref('');
 const handleLogin = async () => {
   try {
     await authStore.login({ email: email.value, password: password.value });
+    console.log('✅ Redirecting to /documents');
     router.push('/documents');
   } catch (error) {
     console.error('Login failed:', error);

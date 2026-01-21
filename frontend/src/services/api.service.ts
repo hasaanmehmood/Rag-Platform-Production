@@ -1,11 +1,14 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 class ApiService {
   private api: AxiosInstance;
 
   constructor() {
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+    console.log('🔧 API Base URL:', baseURL);
+    
     this.api = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
+      baseURL: baseURL,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -18,6 +21,7 @@ class ApiService {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+        console.log('📤 Request:', config.method?.toUpperCase(), config.url);
         return config;
       },
       (error) => {
@@ -27,8 +31,12 @@ class ApiService {
 
     // Response interceptor for error handling
     this.api.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        console.log('📥 Response:', response.status, response.config.url);
+        return response;
+      },
       (error) => {
+        console.error('❌ API Error:', error.response?.status, error.config?.url);
         if (error.response?.status === 401) {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
@@ -39,19 +47,19 @@ class ApiService {
     );
   }
 
-  get<T>(url: string, params?: any) {
+  async get<T>(url: string, params?: any): Promise<AxiosResponse<T>> {
     return this.api.get<T>(url, { params });
   }
 
-  post<T>(url: string, data?: any, config?: any) {
+  async post<T>(url: string, data?: any, config?: any): Promise<AxiosResponse<T>> {
     return this.api.post<T>(url, data, config);
   }
 
-  put<T>(url: string, data?: any) {
+  async put<T>(url: string, data?: any): Promise<AxiosResponse<T>> {
     return this.api.put<T>(url, data);
   }
 
-  delete<T>(url: string) {
+  async delete<T>(url: string): Promise<AxiosResponse<T>> {
     return this.api.delete<T>(url);
   }
 

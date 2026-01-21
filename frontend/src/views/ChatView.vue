@@ -3,7 +3,45 @@
     <!-- Sidebar -->
     <div class="w-64 bg-white border-r border-gray-200 flex flex-col">
       <div class="p-4 border-b border-gray-200">
-        <button @click="handleNewChat" class="w-full btn-primary">New Chat</button>
+        <button @click="handleNewChat" class="w-full btn-primary mb-3">New Chat</button>
+        
+        <!-- Document Filter Toggle -->
+        <button 
+          @click="showDocumentFilter = !showDocumentFilter"
+          class="w-full btn-secondary text-sm"
+        >
+          {{ selectedDocumentIds.length > 0 ? `${selectedDocumentIds.length} Doc(s) Selected` : 'Filter Documents' }}
+        </button>
+      </div>
+
+      <!-- Document Filter Panel -->
+      <div v-if="showDocumentFilter" class="p-4 border-b border-gray-200 max-h-64 overflow-y-auto bg-gray-50">
+        <p class="text-xs font-semibold text-gray-700 mb-2">Select Documents:</p>
+        <div v-if="readyDocuments.length === 0" class="text-xs text-gray-500">
+          No ready documents
+        </div>
+        <div v-else class="space-y-2">
+          <label 
+            v-for="doc in readyDocuments" 
+            :key="doc.id"
+            class="flex items-start gap-2 cursor-pointer"
+          >
+            <input 
+              type="checkbox"
+              :value="doc.id"
+              v-model="selectedDocumentIds"
+              class="mt-1"
+            />
+            <span class="text-xs text-gray-700 line-clamp-2">{{ doc.originalFilename }}</span>
+          </label>
+        </div>
+        <button 
+          v-if="selectedDocumentIds.length > 0"
+          @click="selectedDocumentIds = []"
+          class="text-xs text-red-600 hover:text-red-700 mt-2"
+        >
+          Clear Selection
+        </button>
       </div>
 
       <div class="flex-1 overflow-y-auto p-4">
@@ -39,6 +77,12 @@
         <h1 class="text-xl font-semibold text-gray-900">
           {{ chatStore.currentSession?.title || 'Select or create a chat' }}
         </h1>
+        <p v-if="selectedDocumentIds.length > 0" class="text-sm text-gray-600 mt-1">
+          Searching in {{ selectedDocumentIds.length }} selected document(s)
+        </p>
+        <p v-else class="text-sm text-gray-500 mt-1">
+          Searching in all documents
+        </p>
       </header>
 
       <main class="flex-1 overflow-y-auto p-4">
@@ -62,7 +106,7 @@
               "
             >
               <p class="whitespace-pre-wrap">{{ message.content }}</p>
-              <div v-if="message.sources.length > 0" class="mt-2 pt-2 border-t border-gray-200">
+              <div v-if="message.sources && message.sources.length > 0" class="mt-2 pt-2 border-t border-gray-200">
                 <p class="text-xs font-medium mb-1">Sources:</p>
                 <div class="text-xs space-y-1">
                   <div v-for="(source, idx) in message.sources" :key="idx" class="opacity-75">
@@ -112,7 +156,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
 import { useChatStore } from '@/stores/chat.store';
 import { useDocumentStore } from '@/stores/document.store';
@@ -122,6 +166,12 @@ const chatStore = useChatStore();
 const documentStore = useDocumentStore();
 
 const messageContent = ref('');
+const selectedDocumentIds = ref<string[]>([]);
+const showDocumentFilter = ref(false);
+
+const readyDocuments = computed(() => {
+  return documentStore.documents.filter((d) => d.status === 'ready');
+});
 
 onMounted(async () => {
   await chatStore.fetchSessions();
@@ -143,12 +193,14 @@ const handleSendMessage = async () => {
   messageContent.value = '';
 
   try {
-    // Send with all ready documents
-    const readyDocs = documentStore.documents
-      .filter((d) => d.status === 'ready')
-      .map((d) => d.id);
+    // Use selected documents, or all ready documents if none selected
+    const docsToUse = selectedDocumentIds.value.length > 0 
+      ? selectedDocumentIds.value 
+      : readyDocuments.value.map((d) => d.id);
 
-    await chatStore.sendMessage(content, readyDocs.length > 0 ? readyDocs : undefined);
+    console.log('📤 Sending with documents:', docsToUse);
+    
+    await chatStore.sendMessage(content, docsToUse.length > 0 ? docsToUse : undefined);
   } catch (error) {
     console.error('Failed to send message:', error);
   }

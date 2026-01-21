@@ -1,7 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { MultipartFile } from '@fastify/multipart';
-import { UploadDocument } from '../../../application/use-cases/documents/UploadDocument.js';
-import { ProcessDocument } from '../../../application/use-cases/documents/ProcessDocument.js';
+import UploadDocument from '../../../application/use-cases/documents/UploadDocument.js';
+import ProcessDocument from '../../../application/use-cases/documents/ProcessDocument.js';
 import { PostgresDocumentRepository } from '../../../infrastructure/database/repositories/PostgresDocumentRepository.js';
 import { PostgresChunkRepository } from '../../../infrastructure/database/repositories/PostgresChunkRepository.js';
 import { SupabaseStorageService } from '../../../infrastructure/services/SupabaseStorageService.js';
@@ -36,26 +35,31 @@ export class DocumentController {
   }
   
   async upload(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const data = await request.file();
-    
-    if (!data) {
-      throw new ValidationError('No file uploaded');
+    try {
+      const data = await request.file();
+      
+      if (!data) {
+        throw new ValidationError('No file uploaded');
+      }
+      
+      const buffer = await data.toBuffer();
+      
+      const document = await this.uploadDocument.execute(request.user.id, {
+        data: buffer,
+        filename: data.filename,
+        mimetype: data.mimetype,
+      });
+      
+      // Process document asynchronously
+      this.processDocument.execute(document.id).catch(err => {
+        console.error('Document processing failed:', err);
+      });
+      
+      reply.status(HTTP_STATUS.CREATED).send({ document });
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      throw error;
     }
-    
-    const buffer = await data.toBuffer();
-    
-    const document = await this.uploadDocument.execute(request.user.id, {
-      data: buffer,
-      filename: data.filename,
-      mimetype: data.mimetype,
-    });
-    
-    // Process document asynchronously
-    this.processDocument.execute(document.id).catch(err => {
-      console.error('Document processing failed:', err);
-    });
-    
-    return reply.status(HTTP_STATUS.CREATED).send({ document });
   }
   
   async list(
@@ -66,6 +70,11 @@ export class DocumentController {
       request.user.id,
       request.query
     );
+    
+    // Check if reply was already sent
+    if (reply.sent) {
+      return;
+    }
     
     return reply.status(HTTP_STATUS.OK).send({
       documents,
