@@ -6,6 +6,12 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
+      path: '/',
+      name: 'landing',
+      component: () => import('@/views/LandingView.vue'),
+      meta: { requiresAuth: false },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/LoginView.vue'),
@@ -16,10 +22,6 @@ const router = createRouter({
       name: 'register',
       component: () => import('@/views/RegisterView.vue'),
       meta: { requiresAuth: false },
-    },
-    {
-      path: '/',
-      redirect: '/documents',
     },
     {
       path: '/documents',
@@ -51,8 +53,8 @@ router.beforeEach(async (to, from, next) => {
     return next({ name: 'login' });
   }
 
-  // If user is authenticated and trying to access login/register
-  if (!to.meta.requiresAuth && isAuthenticated && (to.name === 'login' || to.name === 'register')) {
+  // If user is authenticated and trying to access login/register/landing
+  if (!to.meta.requiresAuth && isAuthenticated && (to.name === 'login' || to.name === 'register' || to.name === 'landing')) {
     console.log('✅ Already authenticated, redirecting to documents');
     return next({ name: 'documents' });
   }

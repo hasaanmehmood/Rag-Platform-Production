@@ -21,18 +21,21 @@
           No ready documents
         </div>
         <div v-else class="space-y-2">
-          <label 
-            v-for="doc in readyDocuments" 
+          <label
+            v-for="doc in readyDocuments"
             :key="doc.id"
-            class="flex items-start gap-2 cursor-pointer"
+            class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 transition-colors"
+            :class="{ 'bg-primary-50 border border-primary-300': selectedDocumentIds.includes(doc.id) }"
           >
-            <input 
+            <input
               type="checkbox"
               :value="doc.id"
               v-model="selectedDocumentIds"
-              class="mt-1"
+              class="mt-1 w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
             />
-            <span class="text-xs text-gray-700 line-clamp-2">{{ doc.originalFilename }}</span>
+            <span class="text-xs line-clamp-2" :class="selectedDocumentIds.includes(doc.id) ? 'text-primary-900 font-medium' : 'text-gray-700'">
+              {{ doc.originalFilename }}
+            </span>
           </label>
         </div>
         <button 
@@ -193,14 +196,14 @@ const handleSendMessage = async () => {
   messageContent.value = '';
 
   try {
-    // Use selected documents, or all ready documents if none selected
-    const docsToUse = selectedDocumentIds.value.length > 0 
-      ? selectedDocumentIds.value 
-      : readyDocuments.value.map((d) => d.id);
+    // Only use explicitly selected documents
+    const docsToUse = selectedDocumentIds.value.length > 0
+      ? selectedDocumentIds.value
+      : undefined;
 
-    console.log('📤 Sending with documents:', docsToUse);
-    
-    await chatStore.sendMessage(content, docsToUse.length > 0 ? docsToUse : undefined);
+    console.log('📤 Sending with documents:', docsToUse || 'all documents');
+
+    await chatStore.sendMessage(content, docsToUse);
   } catch (error) {
     console.error('Failed to send message:', error);
   }
