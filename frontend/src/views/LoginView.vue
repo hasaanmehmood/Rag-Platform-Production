@@ -3,12 +3,12 @@
     <div class="max-w-md w-full">
       <div class="text-center mb-10">
         <div class="flex items-center justify-center gap-3 mb-4">
-          <div class="w-14 h-14 bg-gradient-to-br from-primary-500 to-accent-teal rounded-2xl flex items-center justify-center neon-glow">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center neon-glow" style="background: #252525;">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <h1 class="text-4xl font-black gradient-text text-glow">ContextIQ</h1>
+          <h1 class="text-4xl font-black gradient-text-light text-glow">ContextIQ</h1>
         </div>
         <p class="text-gray-300 text-lg">Sign in to your account</p>
       </div>

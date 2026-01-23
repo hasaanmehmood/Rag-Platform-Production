@@ -20,12 +20,12 @@
       <nav class="glass-dark-modern backdrop-blur-xl p-6 border-b border-white/10 relative z-10">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-accent-teal rounded-xl flex items-center justify-center neon-glow">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center neon-glow" style="background: #252525;">
               <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <span class="text-3xl font-black text-white gradient-text">ContextIQ</span>
+            <span class="text-3xl font-black gradient-text-light">ContextIQ</span>
           </div>
 
           <div class="flex gap-4">
@@ -37,7 +37,7 @@
             </router-link>
             <router-link
               to="/register"
-              class="btn-modern"
+              class="btn-modern btn-modern-sm"
             >
               Get Started
             </router-link>
@@ -65,7 +65,7 @@
           <div class="flex gap-6 justify-center mb-20">
             <router-link
               to="/register"
-              class="btn-modern text-lg px-10 py-4"
+              class="btn-modern btn-modern-sm text-lg px-10 py-4"
             >
               Start Free Trial →
             </router-link>
@@ -109,7 +109,7 @@
 
         <div class="grid md:grid-cols-3 gap-8">
           <div class="glass-dark-modern p-8 rounded-3xl card-hover neon-border">
-            <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center mb-6 neon-glow">
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 neon-glow" style="background: #252525;">
               <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
               </svg>
@@ -119,7 +119,7 @@
           </div>
 
           <div class="glass-dark-modern p-8 rounded-3xl card-hover neon-border">
-            <div class="w-16 h-16 bg-gradient-to-br from-accent-teal to-accent-lightTeal rounded-2xl flex items-center justify-center mb-6 neon-glow">
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 neon-glow" style="background: #252525;">
               <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
@@ -129,7 +129,7 @@
           </div>
 
           <div class="glass-dark-modern p-8 rounded-3xl card-hover neon-border">
-            <div class="w-16 h-16 bg-gradient-to-br from-primary-600 to-accent-teal rounded-2xl flex items-center justify-center mb-6 neon-glow">
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 neon-glow" style="background: #252525;">
               <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
@@ -154,7 +154,7 @@
 
         <div class="grid md:grid-cols-3 gap-16">
           <div class="text-center fade-in">
-            <div class="w-24 h-24 bg-gradient-to-br from-primary-500 to-accent-teal text-white rounded-3xl flex items-center justify-center text-4xl font-black mx-auto mb-8 neon-glow">
+            <div class="w-24 h-24 text-white rounded-3xl flex items-center justify-center text-4xl font-black mx-auto mb-8 neon-glow" style="background: #252525;">
               1
             </div>
             <h3 class="text-2xl font-bold mb-4 text-white">Upload Documents</h3>
@@ -162,7 +162,7 @@
           </div>
 
           <div class="text-center fade-in" style="animation-delay: 0.1s">
-            <div class="w-24 h-24 bg-gradient-to-br from-accent-teal to-accent-lightTeal text-white rounded-3xl flex items-center justify-center text-4xl font-black mx-auto mb-8 neon-glow">
+            <div class="w-24 h-24 text-white rounded-3xl flex items-center justify-center text-4xl font-black mx-auto mb-8 neon-glow" style="background: #252525;">
               2
             </div>
             <h3 class="text-2xl font-bold mb-4 text-white">Ask Questions</h3>
@@ -170,7 +170,7 @@
           </div>
 
           <div class="text-center fade-in" style="animation-delay: 0.2s">
-            <div class="w-24 h-24 bg-gradient-to-br from-primary-600 to-accent-teal text-white rounded-3xl flex items-center justify-center text-4xl font-black mx-auto mb-8 neon-glow">
+            <div class="w-24 h-24 text-white rounded-3xl flex items-center justify-center text-4xl font-black mx-auto mb-8 neon-glow" style="background: #252525;">
               3
             </div>
             <h3 class="text-2xl font-bold mb-4 text-white">Get Insights</h3>
@@ -200,12 +200,12 @@
         <div class="grid md:grid-cols-4 gap-12">
           <div>
             <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-teal rounded-lg flex items-center justify-center">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #252525;">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <span class="text-xl font-bold gradient-text">ContextIQ</span>
+              <span class="text-xl font-bold gradient-text-light">ContextIQ</span>
             </div>
             <p class="text-gray-400">Making documents smarter with AI.</p>
           </div>

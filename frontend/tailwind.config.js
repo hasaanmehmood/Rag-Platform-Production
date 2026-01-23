@@ -36,6 +36,9 @@ export default {
           lightTeal: '#87b5b8',
           darkBlue: '#1D546D',
           light: '#F3F4F4',
+          gray: '#696969',
+          lightGray: '#9ba1a1',
+          darkGray: '#252525',
         },
       },
       backgroundImage: {
