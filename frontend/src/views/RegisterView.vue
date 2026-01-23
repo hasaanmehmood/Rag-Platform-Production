@@ -1,68 +1,83 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+  <div class="min-h-screen flex items-center justify-center mesh-gradient particle-bg px-4">
     <div class="max-w-md w-full">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">RAG Platform</h1>
-        <p class="text-gray-600 mt-2">Create your account</p>
+      <div class="text-center mb-10">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <div class="w-14 h-14 bg-gradient-to-br from-primary-400 to-accent-purple rounded-2xl flex items-center justify-center neon-glow">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h1 class="text-4xl font-black gradient-text text-glow">RAG Platform</h1>
+        </div>
+        <p class="text-gray-300 text-lg">Create your account</p>
       </div>
 
-      <div class="bg-white rounded-lg shadow-md p-8">
-        <form @submit.prevent="handleRegister" class="space-y-4">
+      <div class="glass-dark-modern p-8 rounded-3xl neon-border">
+        <form @submit.prevent="handleRegister" class="space-y-5">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label class="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-wider">Email</label>
             <input
               v-model="email"
               type="email"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              class="w-full bg-dark-200 border border-white/20 text-white rounded-xl px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 placeholder-gray-500 transition-all"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label class="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-wider">Password</label>
             <input
               v-model="password"
               type="password"
               required
               minlength="6"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              class="w-full bg-dark-200 border border-white/20 text-white rounded-xl px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 placeholder-gray-500 transition-all"
               placeholder="••••••••"
             />
-            <p class="text-xs text-gray-500 mt-1">At least 6 characters</p>
+            <p class="text-xs text-gray-500 mt-2">At least 6 characters</p>
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <label class="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-wider">Confirm Password</label>
             <input
               v-model="confirmPassword"
               type="password"
               required
               minlength="6"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              class="w-full bg-dark-200 border border-white/20 text-white rounded-xl px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 placeholder-gray-500 transition-all"
               placeholder="••••••••"
             />
           </div>
 
-          <div v-if="error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <div v-if="error" class="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg p-3">
             {{ error }}
           </div>
 
           <button
             type="submit"
             :disabled="authStore.loading"
-            class="w-full py-2 px-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-colors"
+            class="w-full btn-modern text-lg py-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {{ authStore.loading ? 'Creating account...' : 'Sign Up' }}
           </button>
         </form>
 
-        <p class="text-center text-sm text-gray-600 mt-4">
-          Already have an account?
-          <router-link to="/login" class="text-primary-600 hover:text-primary-700 font-medium">
-            Sign in
+        <div class="mt-8 text-center">
+          <p class="text-sm text-gray-400">
+            Already have an account?
+            <router-link to="/login" class="text-primary-400 hover:text-primary-300 font-semibold ml-1">
+              Sign in
+            </router-link>
+          </p>
+        </div>
+
+        <div class="mt-6 text-center">
+          <router-link to="/" class="text-sm text-gray-500 hover:text-gray-400 transition-colors">
+            ← Back to home
           </router-link>
-        </p>
+        </div>
       </div>
     </div>
   </div>
@@ -96,26 +111,26 @@ async function handleRegister() {
   }
 
   try {
-    await authStore.register({ 
-      email: email.value, 
-      password: password.value 
+    await authStore.register({
+      email: email.value,
+      password: password.value
     });
     router.push('/chat');
   } catch (err: any) {
     // Check various error formats
-    const errorMessage = 
-      err.response?.data?.error || 
-      err.response?.data?.message || 
-      err.message || 
+    const errorMessage =
+      err.response?.data?.error ||
+      err.response?.data?.message ||
+      err.message ||
       'Registration failed. Please try again.';
-    
+
     error.value = errorMessage;
-    
+
     // If user already exists, suggest login
     if (errorMessage.toLowerCase().includes('already exists')) {
       error.value += '. Try logging in instead.';
     }
-    
+
     console.error('Registration error:', err);
   }
 }

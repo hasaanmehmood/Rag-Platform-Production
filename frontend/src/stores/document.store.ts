@@ -13,8 +13,10 @@ export const useDocumentStore = defineStore('document', () => {
   const page = ref(1);
   const limit = ref(20);
 
-  const fetchDocuments = async (params?: { page?: number; limit?: number; status?: string }) => {
-    loading.value = true;
+  const fetchDocuments = async (params?: { page?: number; limit?: number; status?: string }, silent = false) => {
+    if (!silent) {
+      loading.value = true;
+    }
     error.value = null;
     try {
       const response = await documentService.list(params);
@@ -25,7 +27,9 @@ export const useDocumentStore = defineStore('document', () => {
     } catch (err: any) {
       error.value = err.response?.data?.error?.message || 'Failed to fetch documents';
     } finally {
-      loading.value = false;
+      if (!silent) {
+        loading.value = false;
+      }
     }
   };
 
