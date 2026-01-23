@@ -41,7 +41,7 @@
               v-model="selectedDocumentIds"
               class="mt-0.5 w-4 h-4 text-primary-500 rounded focus:ring-primary-500 bg-dark-300 border-white/20"
             />
-            <span class="text-xs line-clamp-2" :class="selectedDocumentIds.includes(doc.id) ? 'text-primary-300 font-semibold' : 'text-gray-400'">
+            <span class="text-xs line-clamp-2" :class="selectedDocumentIds.includes(doc.id) ? 'text-accent-teal font-semibold' : 'text-gray-400'">
               {{ doc.originalFilename }}
             </span>
           </label>
@@ -63,7 +63,7 @@
           class="p-4 rounded-xl mb-3 cursor-pointer transition-all duration-300 border"
           :class="
             chatStore.currentSession?.id === session.id
-              ? 'bg-gradient-to-r from-primary-500/30 to-accent-purple/30 border-primary-500/50 shadow-lg shadow-primary-500/20'
+              ? 'bg-gradient-to-r from-primary-500/30 to-accent-teal/30 border-primary-500/50 shadow-lg shadow-primary-500/20'
               : 'bg-dark-200 border-white/10 hover:bg-dark-300 hover:border-white/20'
           "
         >
@@ -77,7 +77,7 @@
       </div>
 
       <div class="p-4 border-t border-white/10 space-y-2 shrink-0">
-        <router-link to="/documents" class="block w-full px-4 py-2.5 bg-gradient-to-r from-primary-500 to-accent-purple text-white rounded-xl hover:shadow-lg hover:shadow-primary-500/50 transition-all duration-300 font-semibold text-center text-sm">
+        <router-link to="/documents" class="block w-full px-4 py-2.5 bg-gradient-to-r from-primary-500 to-accent-teal text-white rounded-xl hover:shadow-lg hover:shadow-primary-500/50 transition-all duration-300 font-semibold text-center text-sm">
           My Documents
         </router-link>
         <button @click="authStore.logout" class="w-full px-4 py-2.5 border border-white/20 text-white rounded-xl hover:bg-white/10 transition-all duration-300 font-semibold text-sm">
@@ -92,7 +92,7 @@
         <h1 class="text-2xl font-black text-white gradient-text">
           {{ chatStore.currentSession?.title || 'Select or create a chat' }}
         </h1>
-        <p v-if="selectedDocumentIds.length > 0" class="text-sm text-primary-300 mt-1 font-medium">
+        <p v-if="selectedDocumentIds.length > 0" class="text-sm text-accent-teal mt-1 font-medium">
           <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
@@ -106,7 +106,7 @@
       <main class="flex-1 overflow-y-auto p-6">
         <div v-if="!chatStore.currentSession" class="flex items-center justify-center h-full">
           <div class="text-center">
-            <div class="w-20 h-20 bg-gradient-to-br from-primary-500 to-accent-purple rounded-3xl flex items-center justify-center mx-auto mb-6 neon-glow">
+            <div class="w-20 h-20 bg-gradient-to-br from-primary-500 to-accent-teal rounded-3xl flex items-center justify-center mx-auto mb-6 neon-glow">
               <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
@@ -126,7 +126,7 @@
               class="max-w-3xl rounded-2xl p-5"
               :class="
                 message.role === 'user'
-                  ? 'bg-gradient-to-r from-primary-500 to-accent-purple text-white neon-glow'
+                  ? 'bg-gradient-to-r from-primary-500 to-accent-teal text-white neon-glow'
                   : 'glass-dark-modern border border-white/10'
               "
             >

@@ -4,7 +4,7 @@
     <header class="glass-dark-modern backdrop-blur-xl border-b border-white/10 shrink-0">
       <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-br from-primary-400 to-accent-purple rounded-xl flex items-center justify-center neon-glow">
+          <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-teal rounded-xl flex items-center justify-center neon-glow">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
@@ -12,7 +12,7 @@
           <h1 class="text-2xl font-black gradient-text">My Documents</h1>
         </div>
         <div class="flex items-center gap-4">
-          <router-link to="/chat" class="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-accent-purple text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/50 transition-all duration-300">
+          <router-link to="/chat" class="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-accent-teal text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/50 transition-all duration-300">
             Go to Chat
           </router-link>
           <button @click="authStore.logout" class="px-6 py-2.5 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300">
@@ -26,7 +26,7 @@
       <!-- Upload Section -->
       <div class="glass-dark-modern p-6 rounded-2xl neon-border shrink-0">
         <div class="flex items-center gap-3 mb-4">
-          <div class="w-10 h-10 bg-gradient-to-br from-accent-cyan to-primary-500 rounded-lg flex items-center justify-center">
+          <div class="w-10 h-10 bg-gradient-to-br from-accent-teal to-primary-500 rounded-lg flex items-center justify-center">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
@@ -60,7 +60,7 @@
       <!-- Documents List -->
       <div class="glass-dark-modern p-6 rounded-2xl neon-border flex-1 flex flex-col overflow-hidden">
         <div class="flex items-center gap-3 mb-6 shrink-0">
-          <div class="w-10 h-10 bg-gradient-to-br from-accent-pink to-accent-purple rounded-lg flex items-center justify-center">
+          <div class="w-10 h-10 bg-gradient-to-br from-accent-teal to-accent-lightTeal rounded-lg flex items-center justify-center">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
