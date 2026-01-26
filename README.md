@@ -478,6 +478,3 @@ rag-platform/
 ---
 
 Built with ❤️ 
-
-
-https://malaysia.indeed.com/cmp/Carsome-Sdn-Bhd-1/jobs?jk=49f040e97fc9235c&start=0
