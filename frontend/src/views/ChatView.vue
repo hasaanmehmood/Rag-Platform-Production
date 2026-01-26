@@ -59,8 +59,7 @@
         <div
           v-for="session in chatStore.sessions"
           :key="session.id"
-          @click="chatStore.selectSession(session.id)"
-          class="p-4 rounded-xl mb-3 cursor-pointer transition-all duration-300 border"
+          class="group relative p-4 rounded-xl mb-3 cursor-pointer transition-all duration-300 border"
           :style="chatStore.currentSession?.id === session.id ? 'background: rgba(37, 37, 37, 0.5); border-color: #696969;' : ''"
           :class="
             chatStore.currentSession?.id === session.id
@@ -68,12 +67,23 @@
               : 'bg-dark-200 border-white/10 hover:bg-dark-300 hover:border-white/20'
           "
         >
-          <p class="text-sm font-semibold truncate text-white mb-1">
-            {{ session.title || 'New Chat' }}
-          </p>
-          <p class="text-xs text-gray-400">
-            {{ formatDate(session.updatedAt) }}
-          </p>
+          <div @click="chatStore.selectSession(session.id)">
+            <p class="text-sm font-semibold truncate text-white mb-1 pr-8">
+              {{ session.title || 'New Chat' }}
+            </p>
+            <p class="text-xs text-gray-400">
+              {{ formatDate(session.updatedAt) }}
+            </p>
+          </div>
+          <button
+            @click.stop="handleDeleteSession(session.id)"
+            class="absolute top-3 right-3 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-500/20 border border-transparent hover:border-red-500/50"
+            title="Delete chat"
+          >
+            <svg class="w-4 h-4 text-gray-400 hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -215,6 +225,18 @@ const handleNewChat = async () => {
     await chatStore.createSession();
   } catch (error) {
     console.error('Failed to create chat:', error);
+  }
+};
+
+const handleDeleteSession = async (sessionId: string) => {
+  if (!confirm('Are you sure you want to delete this chat? This action cannot be undone.')) {
+    return;
+  }
+
+  try {
+    await chatStore.deleteSession(sessionId);
+  } catch (error) {
+    console.error('Failed to delete chat:', error);
   }
 };
 

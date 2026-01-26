@@ -37,10 +37,19 @@ class ApiService {
       },
       (error) => {
         console.error('❌ API Error:', error.response?.status, error.config?.url);
+
+        // Only redirect to login on 401 if it's NOT a login/register attempt
+        // (to avoid page refresh when credentials are wrong)
         if (error.response?.status === 401) {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          window.location.href = '/login';
+          const url = error.config?.url || '';
+          const isAuthEndpoint = url.includes('/login') || url.includes('/register');
+
+          if (!isAuthEndpoint) {
+            // Only clear tokens and redirect if this is a protected route failing
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(error);
       }

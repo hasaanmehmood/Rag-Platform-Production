@@ -3,10 +3,8 @@
     <div class="max-w-md w-full">
       <div class="text-center mb-10">
         <div class="flex items-center justify-center gap-3 mb-4">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center neon-glow" style="background: #252525;">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+          <div class="scale-[0.55] origin-center">
+            <LogoLoader />
           </div>
           <h1 class="text-4xl font-black gradient-text-light text-glow">ContextIQ</h1>
         </div>
@@ -21,7 +19,9 @@
               v-model="email"
               type="email"
               required
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
               class="w-full bg-dark-200 border border-white/20 text-white rounded-xl px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 placeholder-gray-500 transition-all"
+              :class="{ 'border-red-500/50': error }"
               placeholder="you@example.com"
             />
           </div>
@@ -32,11 +32,12 @@
               v-model="password"
               type="password"
               required
-              minlength="6"
+              minlength="8"
               class="w-full bg-dark-200 border border-white/20 text-white rounded-xl px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 placeholder-gray-500 transition-all"
+              :class="{ 'border-red-500/50': error }"
               placeholder="••••••••"
             />
-            <p class="text-xs text-gray-500 mt-2">At least 6 characters</p>
+            <p class="text-xs text-gray-500 mt-2">At least 8 characters</p>
           </div>
 
           <div>
@@ -45,8 +46,9 @@
               v-model="confirmPassword"
               type="password"
               required
-              minlength="6"
+              minlength="8"
               class="w-full bg-dark-200 border border-white/20 text-white rounded-xl px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 placeholder-gray-500 transition-all"
+              :class="{ 'border-red-500/50': error }"
               placeholder="••••••••"
             />
           </div>
@@ -87,6 +89,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.store';
+import LogoLoader from '@/components/LogoLoader.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -99,14 +102,22 @@ const error = ref('');
 async function handleRegister() {
   error.value = '';
 
-  // Validate passwords match
-  if (password.value !== confirmPassword.value) {
-    error.value = 'Passwords do not match';
+  // Validate email format
+  const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+  if (!emailRegex.test(email.value)) {
+    error.value = 'Please enter a valid email address';
     return;
   }
 
-  if (password.value.length < 6) {
-    error.value = 'Password must be at least 6 characters';
+  // Validate password length (backend requires 8 characters)
+  if (password.value.length < 8) {
+    error.value = 'Password must be at least 8 characters';
+    return;
+  }
+
+  // Validate passwords match
+  if (password.value !== confirmPassword.value) {
+    error.value = 'Passwords do not match';
     return;
   }
 
@@ -115,23 +126,28 @@ async function handleRegister() {
       email: email.value,
       password: password.value
     });
-    router.push('/chat');
+    router.push('/documents');
   } catch (err: any) {
-    // Check various error formats
-    const errorMessage =
-      err.response?.data?.error ||
-      err.response?.data?.message ||
-      err.message ||
-      'Registration failed. Please try again.';
-
-    error.value = errorMessage;
-
-    // If user already exists, suggest login
-    if (errorMessage.toLowerCase().includes('already exists')) {
-      error.value += '. Try logging in instead.';
-    }
-
     console.error('Registration error:', err);
+
+    // Extract error message from various possible formats
+    const errorMessage = err.response?.data?.error?.message ||
+                        err.response?.data?.message ||
+                        err.response?.data?.error ||
+                        err.message ||
+                        'Registration failed. Please try again.';
+
+    // Provide user-friendly error messages
+    if (errorMessage.toLowerCase().includes('already exists') ||
+        errorMessage.toLowerCase().includes('already registered')) {
+      error.value = 'An account with this email already exists. Try logging in instead.';
+    } else if (errorMessage.toLowerCase().includes('invalid email')) {
+      error.value = 'Please enter a valid email address';
+    } else if (errorMessage.toLowerCase().includes('password')) {
+      error.value = errorMessage;
+    } else {
+      error.value = errorMessage;
+    }
   }
 }
 </script>

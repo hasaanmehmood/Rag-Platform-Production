@@ -3,10 +3,8 @@
     <div class="max-w-md w-full">
       <div class="text-center mb-10">
         <div class="flex items-center justify-center gap-3 mb-4">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center neon-glow" style="background: #252525;">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+          <div class="scale-[0.55] origin-center">
+            <LogoLoader />
           </div>
           <h1 class="text-4xl font-black gradient-text-light text-glow">ContextIQ</h1>
         </div>
@@ -21,7 +19,9 @@
               v-model="email"
               type="email"
               required
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
               class="w-full bg-dark-200 border border-white/20 text-white rounded-xl px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 placeholder-gray-500 transition-all"
+              :class="{ 'border-red-500/50': localError }"
               placeholder="you@example.com"
             />
           </div>
@@ -33,12 +33,13 @@
               type="password"
               required
               class="w-full bg-dark-200 border border-white/20 text-white rounded-xl px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 placeholder-gray-500 transition-all"
+              :class="{ 'border-red-500/50': localError }"
               placeholder="••••••••"
             />
           </div>
 
-          <div v-if="authStore.error" class="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg p-3">
-            {{ authStore.error }}
+          <div v-if="localError || authStore.error" class="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+            {{ localError || authStore.error }}
           </div>
 
           <button
@@ -73,20 +74,46 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.store';
+import LogoLoader from '@/components/LogoLoader.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 
 const email = ref('');
 const password = ref('');
+const localError = ref('');
 
 const handleLogin = async () => {
+  // Clear all errors
+  localError.value = '';
+
+  // Validate email format
+  const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+  if (!emailRegex.test(email.value)) {
+    localError.value = 'Please enter a valid email address';
+    return;
+  }
+
   try {
     await authStore.login({ email: email.value, password: password.value });
     console.log('✅ Redirecting to /documents');
-    router.push('/documents');
-  } catch (error) {
+    await router.push('/documents');
+  } catch (error: any) {
     console.error('Login failed:', error);
+
+    // Extract and display user-friendly error message
+    const errorMessage = error.response?.data?.error?.message ||
+                        error.response?.data?.message ||
+                        error.message;
+
+    if (errorMessage?.toLowerCase().includes('invalid credentials') ||
+        errorMessage?.toLowerCase().includes('unauthorized')) {
+      localError.value = 'Invalid email or password. Please try again.';
+    } else if (errorMessage?.toLowerCase().includes('user not found')) {
+      localError.value = 'No account found with this email. Please sign up first.';
+    } else {
+      localError.value = errorMessage || 'Login failed. Please try again.';
+    }
   }
 };
 </script>

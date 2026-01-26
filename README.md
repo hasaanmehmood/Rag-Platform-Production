@@ -1,3 +1,198 @@
+# 🚀 RAG Platform - Production-Grade Document Chat
+
+Enterprise-ready Retrieval-Augmented Generation platform for intelligent document interaction.
+
+## 🎯 Features
+
+- **Secure Authentication**: Supabase Auth with JWT
+- **Document Management**: Upload PDF, DOCX, TXT files
+- **Intelligent RAG**: OpenAI embeddings with pgvector similarity search
+- **Real-time Chat**: Streaming responses with source citations
+- **Multi-tenancy**: Complete user isolation with RLS
+- **Production Ready**: Docker, CI/CD, monitoring, and GCP deployment
+
+## 🏗️ Architecture
+
+```
+Frontend (Vue 3) → Backend (Fastify) → Supabase (Postgres + Storage)
+                              ↓
+                        OpenAI API
+```
+
+## 📦 Tech Stack
+
+### Frontend
+- Vue 3 + TypeScript + Vite
+- TailwindCSS
+- Pinia (State Management)
+- Vue Router
+
+### Backend
+- Node.js + TypeScript
+- Fastify
+- Clean Architecture
+- Zod Validation
+
+### Infrastructure
+- Supabase (Auth, Postgres, Storage, pgvector)
+- OpenAI API (text-embedding-3-large, GPT-4.1)
+- Docker + Docker Compose
+- GitHub Actions CI/CD
+- Google Cloud Platform (Cloud Run)
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 20+
+- Docker & Docker Compose
+- Supabase Account
+- OpenAI API Key
+- GCP Account (for production)
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/your-org/rag-platform.git
+cd rag-platform
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Setup Supabase
+
+1. Create a new project at https://supabase.com
+2. Run the setup script:
+
+```bash
+psql -h your-supabase-host -U postgres -d postgres -f infrastructure/scripts/setup-supabase.sql
+```
+
+3. Enable pgvector extension in SQL Editor:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+### 4. Configure Environment Variables
+
+**Backend (.env)**
+
+```bash
+cd backend
+cp .env.example .env
+# Edit .env with your values
+```
+
+**Frontend (.env)**
+
+```bash
+cd frontend
+cp .env.example .env
+# Edit .env with your values
+```
+
+### 5. Start Development Servers
+
+**Option A: Using Docker Compose (Recommended)**
+
+```bash
+npm run docker:up
+```
+
+- Backend: http://localhost:3000
+- Frontend: http://localhost:5173
+
+**Option B: Local Development**
+
+```bash
+# Terminal 1 - Backend
+npm run backend:dev
+
+# Terminal 2 - Frontend
+npm run frontend:dev
+```
+
+### 6. Access Application
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:3000
+- API Docs: http://localhost:3000/documentation
+
+## 📚 Documentation
+
+- [Architecture Guide](./docs/ARCHITECTURE.md)
+- [API Documentation](./docs/API.md)
+- [Development Guide](./docs/DEVELOPMENT.md)
+- [Deployment Guide](./docs/DEPLOYMENT.md)
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm test
+
+# Backend tests only
+cd backend && npm test
+
+# Frontend tests only
+cd frontend && npm test
+
+# Coverage
+npm run test:coverage
+```
+
+## 🏗️ Building for Production
+
+```bash
+# Build all services
+npm run build
+
+# Build Docker images
+npm run docker:build
+```
+
+## 🚢 Deployment
+
+### Deploy to GCP Cloud Run
+
+See [DEPLOYMENT.md](./docs/DEPLOYMENT.md) for complete guide.
+
+```bash
+# Setup GCP project
+gcloud config set project YOUR_PROJECT_ID
+
+# Deploy backend
+cd backend
+gcloud run deploy rag-backend --source .
+
+# Deploy frontend
+cd frontend
+gcloud run deploy rag-frontend --source .
+```
+
+## 📊 Monitoring
+
+- Cloud Run Metrics: GCP Console
+- Application Logs: Structured JSON via Pino
+- Error Tracking: Built-in error middleware
+
+## 🔒 Security
+
+- JWT Authentication
+- Row Level Security (RLS)
+- RBAC (Role-Based Access Control)
+- Rate Limiting
+- Input Validation (Zod)
+- Secure Headers (Helmet)
+- CORS Configuration
+
+
+
 ## 🏗️ GCP Infrastructure
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -262,3 +457,27 @@ rag-platform/
 ├─ package.json (root)
 ├─ turbo.json
 └─ README.md
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+
+
+## 🆘 Support
+
+- Documentation: [docs/](./docs/)
+- Issues: GitHub Issues
+- Email: reachhasaan@gmail.com
+
+---
+
+Built with ❤️ 
+
+
+https://malaysia.indeed.com/cmp/Carsome-Sdn-Bhd-1/jobs?jk=49f040e97fc9235c&start=0

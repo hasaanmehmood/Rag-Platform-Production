@@ -20,10 +20,8 @@
       <nav class="glass-dark-modern backdrop-blur-xl p-6 border-b border-white/10 relative z-10">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center neon-glow" style="background: #252525;">
-              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+            <div class="scale-50 origin-left">
+              <LogoLoader />
             </div>
             <span class="text-3xl font-black gradient-text-light">ContextIQ</span>
           </div>
@@ -67,7 +65,7 @@
               to="/register"
               class="btn-modern btn-modern-sm text-lg px-10 py-4"
             >
-              Start Free Trial →
+              Start →
             </router-link>
             <a
               href="#features"
@@ -189,7 +187,7 @@
           to="/register"
           class="btn-modern text-xl px-12 py-5 inline-block"
         >
-          Start Free Trial →
+          Start Now →
         </router-link>
       </div>
     </section>
@@ -200,10 +198,8 @@
         <div class="grid md:grid-cols-4 gap-12">
           <div>
             <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #252525;">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+              <div class="scale-[0.4] origin-left">
+                <LogoLoader />
               </div>
               <span class="text-xl font-bold gradient-text-light">ContextIQ</span>
             </div>
@@ -235,7 +231,7 @@
           </div>
         </div>
         <div class="border-t border-white/10 mt-12 pt-8 text-center text-gray-500">
-          <p>&copy; 2025 ContextIQ. All rights reserved.</p>
+          <p>&copy; 2026 ContextIQ. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -244,6 +240,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import LogoLoader from '@/components/LogoLoader.vue';
 
 // Interactive orb positions
 const orb1X = ref(100);
