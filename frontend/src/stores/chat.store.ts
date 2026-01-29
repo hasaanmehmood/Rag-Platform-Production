@@ -58,7 +58,7 @@ export const useChatStore = defineStore('chat', () => {
     }
   };
 
-  const sendMessage = async (content: string, documentIds?: string[]) => {
+  const sendMessage = async (content: string, documentIds?: string[], systemPrompt?: string) => {
     if (!currentSession.value) return;
 
     sending.value = true;
@@ -82,7 +82,7 @@ export const useChatStore = defineStore('chat', () => {
     try {
       await chatService.sendMessage(
         currentSession.value.id,
-        { content, documentIds },
+        { content, documentIds, systemPrompt },
         (token) => {
           streamingMessage.value += token;
         },

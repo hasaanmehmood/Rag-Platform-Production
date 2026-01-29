@@ -10,6 +10,15 @@
           New Chat
         </button>
 
+        <!-- Persona Selector -->
+        <button
+          @click="showPersonaSelector = !showPersonaSelector"
+          class="w-full px-4 py-2.5 border border-white/20 text-white rounded-xl hover:bg-white/10 transition-all duration-300 text-sm font-semibold mb-3"
+        >
+          <span class="text-lg mr-2">{{ selectedPersona.icon }}</span>
+          {{ selectedPersona.name }}
+        </button>
+
         <!-- Document Filter Toggle -->
         <button
           @click="showDocumentFilter = !showDocumentFilter"
@@ -20,6 +29,38 @@
           </svg>
           {{ selectedDocumentIds.length > 0 ? `${selectedDocumentIds.length} Doc(s) Selected` : 'Filter Documents' }}
         </button>
+      </div>
+
+      <!-- Persona Selector Panel -->
+      <div v-if="showPersonaSelector" class="p-4 border-b border-white/10 max-h-96 overflow-y-auto bg-dark-200 shrink-0">
+        <p class="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Choose AI Persona:</p>
+        <div class="space-y-2">
+          <button
+            v-for="persona in PERSONAS"
+            :key="persona.id"
+            @click="selectPersona(persona)"
+            class="w-full text-left p-3 rounded-lg transition-all duration-200 border"
+            :class="selectedPersona.id === persona.id
+              ? 'border-primary-500/50 bg-primary-500/10'
+              : 'border-white/10 bg-dark-300 hover:bg-dark-400 hover:border-white/20'"
+          >
+            <div class="flex items-start gap-3">
+              <span class="text-2xl" :style="`color: ${persona.color}`">{{ persona.icon }}</span>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-white mb-1">{{ persona.name }}</p>
+                <p class="text-xs text-gray-400 line-clamp-2">{{ persona.description }}</p>
+              </div>
+              <svg
+                v-if="selectedPersona.id === persona.id"
+                class="w-5 h-5 text-primary-500 shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </button>
+        </div>
       </div>
 
       <!-- Document Filter Panel -->
@@ -218,6 +259,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
 import { useChatStore } from '@/stores/chat.store';
 import { useDocumentStore } from '@/stores/document.store';
+import { PERSONAS, type Persona } from '@/types/persona.types';
 
 const authStore = useAuthStore();
 const chatStore = useChatStore();
@@ -226,6 +268,8 @@ const documentStore = useDocumentStore();
 const messageContent = ref('');
 const selectedDocumentIds = ref<string[]>([]);
 const showDocumentFilter = ref(false);
+const showPersonaSelector = ref(false);
+const selectedPersona = ref<Persona>(PERSONAS[0]); // Default to General Assistant
 
 const readyDocuments = computed(() => {
   return documentStore.documents.filter((d) => d.status === 'ready');
@@ -256,6 +300,12 @@ const handleDeleteSession = async (sessionId: string) => {
   }
 };
 
+const selectPersona = (persona: Persona) => {
+  selectedPersona.value = persona;
+  showPersonaSelector.value = false;
+  console.log('Selected persona:', persona.name);
+};
+
 const handleSendMessage = async () => {
   if (!messageContent.value.trim()) return;
 
@@ -269,8 +319,9 @@ const handleSendMessage = async () => {
       : undefined;
 
     console.log('📤 Sending with documents:', docsToUse || 'all documents');
+    console.log('📤 Using persona:', selectedPersona.value.name);
 
-    await chatStore.sendMessage(content, docsToUse);
+    await chatStore.sendMessage(content, docsToUse, selectedPersona.value.systemPrompt);
   } catch (error) {
     console.error('Failed to send message:', error);
   }

@@ -7,6 +7,7 @@ export const CreateSessionSchema = z.object({
 export const SendMessageSchema = z.object({
   content: z.string().min(1, 'Message content is required').max(4000),
   documentIds: z.array(z.string().uuid()).optional(),
+  systemPrompt: z.string().max(2000).optional(),
 });
 
 export type CreateSessionDTO = z.infer<typeof CreateSessionSchema>;

@@ -59,11 +59,11 @@ export class ChatController {
     reply: FastifyReply
   ): Promise<void> {
     const { sessionId } = request.params;
-    const { content, documentIds } = request.body;
-    
+    const { content, documentIds, systemPrompt } = request.body;
+
     // Bypass Fastify's reply handling for SSE
     reply.hijack();
-    
+
     // Set up SSE headers with CORS
     reply.raw.writeHead(200, {
       'Content-Type': 'text/event-stream',
@@ -73,13 +73,14 @@ export class ChatController {
       'Access-Control-Allow-Credentials': 'true',
       'X-Accel-Buffering': 'no',
     });
-    
+
     try {
       const generator = this.sendMessageUseCase.execute(
         sessionId,
         request.user.id,
         content,
-        documentIds
+        documentIds,
+        systemPrompt
       );
       
       for await (const event of generator) {

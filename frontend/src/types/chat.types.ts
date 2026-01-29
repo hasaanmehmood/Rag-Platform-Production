@@ -25,4 +25,5 @@ export interface ChatMessage {
 export interface SendMessageData {
   content: string;
   documentIds?: string[];
+  systemPrompt?: string;
 }

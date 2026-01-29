@@ -18,7 +18,8 @@ export class SendMessage {
     sessionId: string,
     userId: string,
     content: string,
-    documentIds?: string[]
+    documentIds?: string[],
+    systemPrompt?: string
   ): AsyncGenerator<{ type: 'token' | 'sources' | 'done'; data: any }> {
     try {
       // Verify session exists
@@ -63,14 +64,19 @@ export class SendMessage {
       const context = similarChunks
         .map((chunk, i) => `[${i + 1}] ${chunk.content}`)
         .join('\n\n');
-      
+
+      // Build system message - use custom persona prompt if provided, otherwise use default
+      const defaultSystemPrompt = `You are a helpful assistant that answers questions based on the provided context.
+If the context doesn't contain relevant information, say so clearly.
+Always cite the source numbers [1], [2], etc. when using information from the context.`;
+
+      const basePrompt = systemPrompt || defaultSystemPrompt;
+
       // Build messages for GPT
       const messages = [
         {
           role: 'system' as const,
-          content: `You are a helpful assistant that answers questions based on the provided context. 
-If the context doesn't contain relevant information, say so clearly.
-Always cite the source numbers [1], [2], etc. when using information from the context.
+          content: `${basePrompt}
 
 Context:
 ${context}`,
