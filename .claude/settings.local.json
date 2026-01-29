@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"Get-Process | Where-Object {$_ProcessName -like ''*node*'' -or $_ProcessName -like ''*tsx*''} | Select-Object -Property Id,ProcessName,StartTime | Format-Table\")"
+    ]
+  }
+}

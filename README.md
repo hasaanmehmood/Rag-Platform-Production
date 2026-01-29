@@ -11,6 +11,18 @@ Enterprise-ready Retrieval-Augmented Generation platform for intelligent documen
 - **Multi-tenancy**: Complete user isolation with RLS
 - **Production Ready**: Docker, CI/CD, monitoring, and GCP deployment
 
+## Persona Types
+
+Created 8 personas with unique system prompts:
+💬 General Assistant (default)
+💼 Business / Executive
+🎧 Customer Support
+⚖️ Compliance / Legal
+📄 CV Expert
+📋 Summarizer
+📚 Citation Finder
+✍️ Grammar Checker
+
 ## 🏗️ Architecture
 
 ```
@@ -476,5 +488,7 @@ rag-platform/
 - Email: reachhasaan@gmail.com
 
 ---
+
+
 
 Built with ❤️ 
