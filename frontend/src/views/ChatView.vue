@@ -155,14 +155,24 @@
             </div>
           </div>
 
-          <!-- Streaming message -->
-          <div v-if="chatStore.sending && chatStore.streamingMessage" class="flex justify-start">
+          <!-- Thinking/Streaming message -->
+          <div v-if="chatStore.sending" class="flex justify-start">
             <div class="max-w-3xl glass-dark-modern border border-white/10 rounded-2xl p-5">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></div>
-                <span class="text-xs text-gray-400 font-medium">AI is typing...</span>
+              <div v-if="!chatStore.streamingMessage" class="flex items-center gap-3">
+                <div class="flex gap-1">
+                  <div class="w-2 h-2 bg-accent-teal rounded-full animate-bounce" style="animation-delay: 0s"></div>
+                  <div class="w-2 h-2 bg-accent-teal rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                  <div class="w-2 h-2 bg-accent-teal rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                </div>
+                <span class="text-sm text-gray-300 font-medium">Thinking...</span>
               </div>
-              <p class="whitespace-pre-wrap text-gray-200">{{ chatStore.streamingMessage }}</p>
+              <div v-else>
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></div>
+                  <span class="text-xs text-gray-400 font-medium">AI is typing...</span>
+                </div>
+                <p class="whitespace-pre-wrap text-gray-200">{{ chatStore.streamingMessage }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -185,7 +195,13 @@
               :disabled="!messageContent.trim() || chatStore.sending"
               class="btn-modern px-8 py-3 self-end disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ chatStore.sending ? 'Sending...' : 'Send' }}
+              <span v-if="chatStore.sending" class="flex items-center gap-2">
+                <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Thinking...
+              </span>
+              <span v-else>Send</span>
             </button>
           </form>
           <div v-if="chatStore.error" class="mt-3 text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg p-3">
