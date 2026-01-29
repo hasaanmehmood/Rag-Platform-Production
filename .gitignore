@@ -6,6 +6,7 @@ dist/
 *.log
 coverage/
 .turbo/
+.claude
 
 # Logs
 logs
